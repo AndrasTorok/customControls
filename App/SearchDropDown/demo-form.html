@@ -10,18 +10,15 @@
         angular.module('app', ['customControls'])
         .controller('mainCtrl', function ($scope, Helpers) {
             $scope.model = {
-                options: {
-                    items: Helpers.Items,
-                    showSearch: true,
-                    minSearchChars : 2
+                options: {                                                      //configure the searchDropDown
+                    items: Helpers.Items,                                       //privide the list of items to display 
+                    showSearch: true,                                           //do show the search input
+                    minSearchChars: 2                                           //start to filter when t least 2 characters are in the input
                 },
-                selected: function (item) {
-                    this.item = item;
-                },
-                displayItem: function () {
+                displayItem: function () {                                      //display the selected item in the UI
                     return this.selectedOption ? 'The selected item is ( ' + this.selectedOption.value + ' ) ' + this.selectedOption.label : ' ';
                 },
-                selectedOption : Helpers.Items[0]
+                selectedOption: Helpers.Items && Helpers.Items.length ? Helpers.Items[0] : null
             };
         })
         .factory('Helpers', function () {
@@ -40,7 +37,7 @@
                     { value: 13, label: 'Thirteen' }];
 
             return {
-                Items: items
+                Items: items                                                    //provide items to display in the control
             };
         });
     </script>
@@ -72,11 +69,7 @@
                    
                 </div>
             </div>
-
         </form>
-
-
     </article>
-
 </body>
 </html>
