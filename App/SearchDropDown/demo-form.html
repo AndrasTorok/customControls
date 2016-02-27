@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="app">
+<head>
+    <title>Demo form</title>
+    <link href="../../Content/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="customControls.css" rel="stylesheet" />    
+    <script src="../../Scripts/lib/angularJS/angular.js"></script>
+    <script src="customControls.js"></script>
+    <script>
+        angular.module('app', ['customControls'])
+        .controller('mainCtrl', function ($scope, Helpers) {
+            $scope.model = {
+                options: {
+                    items: Helpers.Items,
+                    showSearch: true,
+                    minSearchChars : 2
+                },
+                selected: function (item) {
+                    this.item = item;
+                },
+                displayItem: function () {
+                    return this.selectedOption ? 'The selected item is ( ' + this.selectedOption.value + ' ) ' + this.selectedOption.label : ' ';
+                },
+                selectedOption : Helpers.Items[0]
+            };
+        })
+        .factory('Helpers', function () {
+            var items = [{ value: 1, label: 'One' },
+                    { value: 2, label: 'Two' },
+                    { value: 3, label: 'Three' },
+                    { value: 4, label: 'Four' },
+                    { value: 5, label: 'Five' },
+                    { value: 6, label: 'Six' },
+                    { value: 7, label: 'Seven' },
+                    { value: 8, label: 'Eight' },
+                    { value: 9, label: 'Nine' },
+                    { value: 10, label: 'Ten' },
+                    { value: 11, label: 'Eleven' },
+                    { value: 12, label: 'Twelve' },
+                    { value: 13, label: 'Thirteen' }];
+
+            return {
+                Items: items
+            };
+        });
+    </script>
+</head>
+<body>
+    <article class="container" ng-controller="mainCtrl">
+        <h2>Styled drop-down</h2>
+        <form name="myForm">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div search-drop-down options="model.options" ng-model="model.selectedOption" required>
+                        <div class="td">{{item.value}}</div>
+                        <div class="td">{{item.label}}</div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <input type="text" placeholder="Type some other text here" />
+                </div>
+                <div class="col-lg-4">
+                    {{model.displayItem()}}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <button class="btn btn-primary" ng-disabled="!myForm.$valid">Save</button>
+                </div>
+                <div class="col-lg-7 col-lg-offset-1">
+                   
+                </div>
+            </div>
+
+        </form>
+
+
+    </article>
+
+</body>
+</html>

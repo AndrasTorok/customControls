@@ -1,0 +1,20 @@
+﻿<section class="custom-drop-down">
+    <div class="btn-group" ng-class="{open: ctrl.opened}">
+        <button type="button" class="btn btn-default custom-button" ng-click="ctrl.toggleOpen()">{{ctrl.selectedItem ? ctrl.selectedItem.label : '&nbsp;'}}</button>
+        <button type="button" class="btn btn-default dropdown-toggle" aria-haspopup="true"
+                aria-expanded="false" ng-click="ctrl.toggleOpen()">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu">
+            <input type="search" ng-model="ctrl.search" ng-change="ctrl.searchChanged()" ng-if="ctrl.showSearch" class="custom-search" />
+            <div>
+                <div class="custom-table">
+                    <div class="tr" ng-repeat="item in ctrl.filteredItems" ng-click="ctrl.selected($index)">
+                        <theplaceholder></theplaceholder>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

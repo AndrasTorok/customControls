@@ -1,0 +1,56 @@
+﻿.custom-drop-down .btn-group {
+    width: 100%;
+}
+
+.custom-drop-down .custom-button {
+    width: calc(100% - 26px);
+}
+
+.custom-drop-down .dropdown-menu {    
+    width: 100%;
+}
+
+.dropdown-menu{
+    margin:0px;
+}
+
+.dropdown-menu > div {
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.dropdown-menu .custom-table {
+    width: 100%;
+}
+
+.dropdown-menu input[type="search"] {
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 4px;
+}
+
+.custom-table{
+    display: table;
+}
+
+.tr{
+    display: table-row;    
+}
+
+.tr:hover{
+    background-color:aliceblue;
+}
+
+.td{
+   display: table-cell;
+   height:25px;
+}
+
+.td:first-child{
+    width:20%;
+}
+
+.td:last-child{
+    width:80%;
+}
