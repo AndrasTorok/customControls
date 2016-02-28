@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="app">
+<head>
+    <title>Demo form</title>
+    <link href="../../Content/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="customControls.css" rel="stylesheet" />    
+    <script src="../../Scripts/lib/angularJS/angular.js"></script>
+    <script src="customControls.js"></script>
+    <script>
+        angular.module('app', ['customControls'])
+        .controller('mainCtrl', function ($scope, Helpers) {
+            $scope.model = {
+                options: {                                                      //configure the searchDropDown
+                    items: Helpers.Items,                                       //privide the list of items to display 
+                    showSearch: true,                                           //do show the search input
+                    minSearchChars: 2,                                          //start to filter when t least 2 characters are in the input                    
+                },                
+                entities: Helpers.Entities               
+            };
+        })
+        .factory('Helpers', function () {
+            var items = [{ value: 1, label: 'One' },
+                    { value: 2, label: 'Two' },
+                    { value: 3, label: 'Three' },
+                    { value: 4, label: 'Four' },
+                    { value: 5, label: 'Five' },
+                    { value: 6, label: 'Six' },
+                    { value: 7, label: 'Seven' },
+                    { value: 8, label: 'Eight' },
+                    { value: 9, label: 'Nine' },
+                    { value: 10, label: 'Ten' },
+                    { value: 11, label: 'Eleven' },
+                    { value: 12, label: 'Twelve' },
+                    { value: 13, label: 'Thirteen' }];
+
+            var entities = [{ value: 1 },
+                { value: 1 },
+                { value: 3 },
+                { value: 12 },
+                { value: 6 },
+                { value: 8 },
+                { value: 7 },
+                { value: 4 },
+                { value: 3 },
+                { value: 5 },
+                { value: 2 },
+                { value: 13 }];
+
+            return {
+                Items: items,                                                    //provide items to display in the control
+                Entities: entities
+            };
+        });
+    </script>
+</head>
+<body>
+    <article class="container" ng-controller="mainCtrl">
+        <h2>Styled drop-down</h2>
+        <form name="myForm">
+            <div class="row">
+                <div class="col-lg-12">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="ent in model.entities">
+                                <td>
+                                    <div search-drop-down options="model.options" ng-model="ent.value" required>
+                                        <div class="td">{{item.value}}</div>
+                                        <div class="td">{{item.label}}</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    
+                </div>                
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <button class="btn btn-primary" ng-disabled="!myForm.$valid">Save</button>
+                </div>
+                <div class="col-lg-7 col-lg-offset-1">
+                   
+                </div>
+            </div>
+        </form>
+    </article>
+</body>
+</html>
