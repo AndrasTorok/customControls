@@ -1,5 +1,7 @@
 ﻿angular.module('customControls', [])
 .directive('searchDropDown', function ($compile, $templateRequest, $timeout) {
+    'use strict';
+
     return {
         restrict: 'EA',
         transclude: true,
@@ -10,9 +12,10 @@
         controllerAs: 'ctrl',                                                       //use controllerAs => ready for TypeScript way to use
         controller: function ($scope, $element, $transclude) {                      //
             var self = this,                                                        //keep the context in the callbacks
+                element = $element[0],                                              //persist the HTML element
                 searchElement,                                                      //the search element
                 focusedElement,                                                     //the element which had the focus at the moment the user clicked on the drop-down
-                minSearchChars;                                                     //the minimum characters the user should enter the filtering to start
+                minSearchChars = $scope.options.minSearchChars || 2;                //the minimum characters the user should enter the filtering to start
 
             this.opened = false;                                                    //drop-down expanded state
             this.toggleOpen = function () {                                         //toggle the expanded state of the control
@@ -25,15 +28,22 @@
                     if (focusedElement) focusedElement.focus();                     //if we have the previouly focused element then focus it
                 }
             };
-            this.items = [];                                                        //items to be displayed
             this.selected = function (index) {                                      //on selecting an item
                 self.selectedItem = self.filteredItems[index];                      //get the selected item from the filtered list
-                $scope.ngModel = self.selectedItem;                                 //set the model provided using 2 way binding to teh new value
+                $scope.ngModel = self.selectedItem.value;                           //set the model provided using 2 way binding to teh new value
                 self.toggleOpen();                                                  //toggle the drop down state to closed
             };
-            this.selectedItem = null;                                               //selected item
             this.search = null;                                                     //search term
-            this.filteredItems = [];                                                //filtered items
+            this.searchChanged = function () { searchChanged(self); };              //on search changed
+            this.showSearch = $scope.options.showSearch;                            //persist the showState for more convenient use
+            this.items = this.filteredItems = $scope.options.items;                 //items to be displayed
+            this.selectedItem = selectedItem($scope.ngModel);                       //set the selected item
+
+            $scope.options.api = {                                                  //expose an API to the client
+                setItems: function (items) {                                        //set the items
+                    self.items = items;
+                }
+            };
 
             $templateRequest('./search-drop-down.html').then(function (html) {      //get the template and transclude it
                 var template = angular.element(html),                               //get the template 
@@ -43,25 +53,14 @@
                     templateEl.find('theplaceholder').replaceWith(clonedContent);   //replace the placeholder with the transcluded content
 
                     $compile(templateEl)($scope, function (clonedTemplate) {        //compile it
-                        $element.append(clonedTemplate);                            //append  it         
+                        $element.append(clonedTemplate);                            //append  it     
+
+                        if ($scope.options.onReady) $scope.options.onReady();
                     });
                 });
-            });
-
-            $scope.$watch('options', function () {                                  //watch the options
-                if ($scope.options) {                                               //if provided
-                    self.items = self.filteredItems = $scope.options.items;         //set the items and teh fitered items to the rpvided list
-                    self.showSearch = $scope.options.showSearch;                    //persist the showState for more convenient use
-                    minSearchChars = $scope.options.minSearchChars || 2;            //persist the minSearchChars
-                }
-            });
-
-            $scope.$watch('ngModel', function () {                                  //watch the ngModel
-                self.selectedItem = $scope.ngModel;                                 //set the selected item
-            });
+            });            
 
             $timeout(function () {                                                  //this initialization should run in the next digest cycle
-                var element = $element[0];                                          //persist the HTML element
                 if ($scope.options.showSearch) {                                    //if the search input is active
                     searchElement = document.querySelector('input[type="search"]', element);    //then find and persist it
 
@@ -85,6 +84,10 @@
             function searchChanged(self) {                                          //on search term is changing
                 var seachTerm = self.search && self.search.length >= minSearchChars ? self.search.toLowerCase() : null; //set it to lower case
                 self.filteredItems = seachTerm ? self.items.filter(function (item) { return item.label.toLowerCase().indexOf(seachTerm) >= 0; }) : self.items;  //filter by lowercase
+            }
+
+            function selectedItem(value) {
+                return self.filteredItems.find(function (item) { return item.value == value; });
             }
         }
     };

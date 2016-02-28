@@ -119,6 +119,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Content Include="App\SearchDropDown\customControls.css" />
     <Content Include="App\SearchDropDown\customControls.js" />
+    <Content Include="App\SearchDropDown\demo-form-many-times.html" />
     <Content Include="App\SearchDropDown\demo-form.html" />
     <Content Include="App\SearchDropDown\search-drop-down.html" />
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
@@ -919,6 +920,7 @@
     <Content Include="Scripts\lib\angularJS\i18n\angular-locale_zu.js" />
     <Content Include="Scripts\lib\bootstrap\bootstrap.js" />
     <Content Include="Scripts\lib\bootstrap\bootstrap.min.js" />
+    <Content Include="Scripts\app\helpers\Helpers.js" />
     <Content Include="Scripts\lib\jQuery\jquery-1.9.1.js" />
     <Content Include="Scripts\lib\jQuery\jquery-1.9.1.min.js" />
     <Content Include="Web.config" />

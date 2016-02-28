@@ -13,12 +13,15 @@
                 options: {                                                      //configure the searchDropDown
                     items: Helpers.Items,                                       //privide the list of items to display 
                     showSearch: true,                                           //do show the search input
-                    minSearchChars: 2                                           //start to filter when t least 2 characters are in the input
-                },
-                displayItem: function () {                                      //display the selected item in the UI
-                    return this.selectedOption ? 'The selected item is ( ' + this.selectedOption.value + ' ) ' + this.selectedOption.label : ' ';
-                },
-                selectedOption: Helpers.Items && Helpers.Items.length ? Helpers.Items[0] : null
+                    minSearchChars: 2,                                          //start to filter when t least 2 characters are in the input
+                    onReady: function () {                                      //onReady is firing when the control has added the api to the options
+                        var items = Helpers.Items;
+                        items.push({ value: 14, label: 'Fourteen' });
+
+                        $scope.model.options.api.setItems(items);
+                    }
+                },                
+                selectedOption: Helpers.Items && Helpers.Items.length ? Helpers.Items[0].value : null,                
             };
         })
         .factory('Helpers', function () {
@@ -57,7 +60,7 @@
                     <input type="text" placeholder="Type some other text here" />
                 </div>
                 <div class="col-lg-4">
-                    {{model.displayItem()}}
+                    The selected option is {{model.selectedOption}}
                 </div>
             </div>
 
