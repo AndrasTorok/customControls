@@ -21,7 +21,8 @@
             this.toggleOpen = function () {                                         //toggle the expanded state of the control
                 self.opened = !self.opened;                                         //
                 if (self.opened) {                                                  //on opened
-                    if(searchElement) $timeout(function () { searchElement.focus(); }); //and there is a search element the focus it , needs to happen in the next digest cycle
+                    if (searchElement) $timeout(function () { searchElement.focus(); }); //and there is a search element the focus it , needs to happen in the next digest cycle
+                    else console.log('searchElement not found');
                 } else {                                                            //on closed
                     self.search = null;                                             //clear the search
                     searchChanged(self);                                            //update the filteredItems when search changed                                        
@@ -62,11 +63,11 @@
 
             $timeout(function () {                                                  //this initialization should run in the next digest cycle
                 if ($scope.options.showSearch) {                                    //if the search input is active
-                    searchElement = document.querySelector('input[type="search"]', element);    //then find and persist it
+                    searchElement = element.querySelector('input[type="search"]');    //then find and persist it
 
                     if (searchElement) {                                            //
-                        var buttons = [document.querySelector('.custom-button', element),   //find the 2 buttons
-                            document.querySelector('.dropdown-toggle', element)];   //composing the drop-down
+                        var buttons = [element.querySelector('.custom-button'),     //find the 2 buttons
+                            element.querySelector('.dropdown-toggle')];             //composing the drop-down
 
                         buttons.forEach(function (button) {                         //each of them
                             button.addEventListener('focus', function (evt) {       //on getting the focus save the element which had the focus before it
