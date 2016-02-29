@@ -9,20 +9,21 @@
     <script>
         angular.module('app', ['customControls'])
         .controller('mainCtrl', function ($scope, Helpers) {
-            $scope.model = {
-                options: {                                                      //configure the searchDropDown
-                    items: Helpers.Items,                                       //privide the list of items to display 
-                    showSearch: true,                                           //do show the search input
-                    minSearchChars: 2,                                          //start to filter when t least 2 characters are in the input
-                    onReady: function () {                                      //onReady is firing when the control has added the API to the options
-                        var items = Helpers.Items;
-                        items.push({ value: 14, label: 'Fourteen' });
+            var self = this;
 
-                        $scope.model.options.api.setItems(items);               //call the control's API to update the displayed items
-                    }
-                },                
-                selectedOption: Helpers.Items && Helpers.Items.length ? Helpers.Items[0].value : null,                
+            this.options = {                                                //configure the searchDropDown
+                items: Helpers.Items,                                       //privide the list of items to display 
+                showSearch: true,                                           //do show the search input
+                minSearchChars: 2,                                          //start to filter when t least 2 characters are in the input
+                onReady: function () {                                      //onReady is firing when the control has added the API to the options
+                    var items = Helpers.Items;
+                    items.push({ value: 14, label: 'Fourteen' });
+
+                    self.options.api.setItems(items);                       //call the control's API to update the displayed items
+                }
             };
+
+            this.selectedOption = Helpers.Items && Helpers.Items.length ? Helpers.Items[0].value : null;
         })
         .factory('Helpers', function () {
             var items = [{ value: 1, label: 'One' },
@@ -46,12 +47,12 @@
     </script>
 </head>
 <body>
-    <article class="container" ng-controller="mainCtrl">
+    <article class="container" ng-controller="mainCtrl as mainCtrl">
         <h2>Styled drop-down</h2>
         <form name="myForm">
             <div class="row">
                 <div class="col-lg-4">
-                    <div search-drop-down options="model.options" ng-model="model.selectedOption" required>
+                    <div search-drop-down options="mainCtrl.options" ng-model="mainCtrl.selectedOption" required>
                         <div class="td">{{item.value}}</div>
                         <div class="td">{{item.label}}</div>
                     </div>
@@ -60,7 +61,7 @@
                     <input type="text" placeholder="Type some other text here" />
                 </div>
                 <div class="col-lg-4">
-                    The selected option is {{model.selectedOption}}
+                    The selected option is {{mainCtrl.selectedOption}}
                 </div>
             </div>
 

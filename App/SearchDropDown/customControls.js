@@ -15,7 +15,8 @@
                 element = $element[0],                                              //persist the HTML element
                 searchElement,                                                      //the search element
                 focusedElement,                                                     //the element which had the focus at the moment the user clicked on the drop-down
-                minSearchChars = $scope.options.minSearchChars || 2;                //the minimum characters the user should enter the filtering to start
+                minSearchChars = $scope.options.minSearchChars || 2,                //the minimum characters the user should enter the filtering to start
+                buttons;
 
             this.opened = false;                                                    //drop-down expanded state
             this.toggleOpen = function () {                                         //toggle the expanded state of the control
@@ -66,21 +67,24 @@
                     searchElement = element.querySelector('input[type="search"]');    //then find and persist it
 
                     if (searchElement) {                                            //
-                        var buttons = [element.querySelector('.custom-button'),     //find the 2 buttons
+                        buttons = [element.querySelector('.custom-button'),         //find the 2 buttons
                             element.querySelector('.dropdown-toggle')];             //composing the drop-down
 
                         buttons.forEach(function (button) {                         //each of them
-                            button.addEventListener('focus', function (evt) {       //on getting the focus save the element which had the focus before it
-                                if (evt.relatedTarget && evt.relatedTarget != searchElement) focusedElement = evt.relatedTarget;    //
-                            });
+                            button.addEventListener('focus', onFocus);              //on focus 
                         });                        
                     }
                 }
             });
 
-            document.addEventListener('keyup', function (evt) {                     //on escape
-                if (evt.keyCode == 27 && self.opened) $timeout(function () { self.toggleOpen(); }); //close the drop-down
-            }, 100);
+            document.addEventListener('keyup', onKeyUp);
+
+            $scope.$on('$destroy', function () {                                    //remove the event handlers when the scope is destroyed
+                document.removeEventListener('keyup', onKeyUp);
+                if (buttons) buttons.forEach(function (button) {                    //each of them
+                    button.removeEventListener('focus', onFocus);                   //remove on focus 
+                });
+            });
 
             function searchChanged(self) {                                          //on search term is changing
                 var seachTerm = self.search && self.search.length >= minSearchChars ? self.search.toLowerCase() : null; //set it to lower case
@@ -89,6 +93,14 @@
 
             function selectedItem(value) {
                 return self.filteredItems.find(function (item) { return item.value == value; });
+            }
+
+            function onKeyUp(evt) {                                                 //on escape
+                if (evt.keyCode == 27 && self.opened) $timeout(function () { self.toggleOpen(); }); //close the drop-down
+            }
+
+            function onFocus(evt) {             //on getting the focus save the element which had the focus before it
+                if (evt.relatedTarget && evt.relatedTarget != searchElement) focusedElement = evt.relatedTarget;    //
             }
         }
     };

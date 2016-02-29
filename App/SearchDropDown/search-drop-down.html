@@ -1,6 +1,7 @@
 ﻿<section class="custom-drop-down">
     <div class="btn-group" ng-class="{open: ctrl.opened}">
-        <button type="button" class="btn btn-default custom-button" ng-click="ctrl.toggleOpen()">{{ctrl.selectedItem ? ctrl.selectedItem.label : '&nbsp;'}}</button>
+        <button type="button" class="btn btn-default custom-button" 
+                ng-click="ctrl.toggleOpen()">{{ctrl.selectedItem ? ctrl.selectedItem.label : '&nbsp;'}}</button>
         <button type="button" class="btn btn-default dropdown-toggle" aria-haspopup="true"
                 aria-expanded="false" ng-click="ctrl.toggleOpen()">
             <span class="caret"></span>
