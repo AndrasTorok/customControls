@@ -2,6 +2,8 @@
 .directive('searchDropDown', function ($compile, $templateRequest, $timeout) {
     'use strict';
 
+    var itemsDictionary = new AppHelpers.Dictionary();
+
     return {
         restrict: 'EA',
         transclude: true,
@@ -16,7 +18,29 @@
                 searchElement,                                                      //the search element
                 focusedElement,                                                     //the element which had the focus at the moment the user clicked on the drop-down
                 minSearchChars = $scope.options.minSearchChars || 2,                //the minimum characters the user should enter the filtering to start
-                buttons;
+                buttons,
+                _items,
+                _filteredItems;
+
+            Object.defineProperty(this, 'items', {
+                get: function () {
+                    return !$scope.options.id ? _items : itemsDictionary.get($scope.options.id);
+                },
+                set: function (value) {
+                    if (!$scope.options.id) _items = value;
+                    else itemsDictionary.add($scope.options.id, value);
+                }
+            });
+
+            Object.defineProperty(this, 'filteredItems', {
+                get: function () {
+                    if (!_filteredItems) _filteredItems = self.items;
+                    return _filteredItems;
+                },
+                set: function (value) {
+                    _filteredItems = value;
+                }
+            });
 
             this.opened = false;                                                    //drop-down expanded state
             this.toggleOpen = function () {                                         //toggle the expanded state of the control
@@ -38,12 +62,12 @@
             this.search = null;                                                     //search term
             this.searchChanged = function () { searchChanged(self); };              //on search changed
             this.showSearch = $scope.options.showSearch;                            //persist the showState for more convenient use
-            this.items = this.filteredItems = $scope.options.items;                 //items to be displayed
+            //this.items = this.filteredItems = $scope.options.items;                 //items to be displayed
             this.selectedItem = selectedItem($scope.ngModel);                       //set the selected item
 
             $scope.options.api = {                                                  //expose an API to the client
                 setItems: function (items) {                                        //set the items
-                    self.items = items;
+                    self.items = self.filteredItems = items;
                 }
             };
 
@@ -92,7 +116,7 @@
             }
 
             function selectedItem(value) {
-                return self.filteredItems.find(function (item) { return item.value == value; });
+                return self.filteredItems ? self.filteredItems.find(function (item) { return item.value == value; }) : null;
             }
 
             function onKeyUp(evt) {                                                 //on escape

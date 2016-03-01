@@ -5,46 +5,43 @@
     <link href="../../Content/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="customControls.css" rel="stylesheet" />    
     <script src="../../Scripts/lib/angularJS/angular.js"></script>
+    <script src="../../Scripts/app/helpers/Helpers.js"></script>
     <script src="customControls.js"></script>
     <script>
         angular.module('app', ['customControls'])
-        .controller('mainCtrl', function ($scope, Helpers) {
+        .controller('mainCtrl', function ($scope, Helpers, $timeout, $q) {
+            var gridReady = $q.defer();
+
             $scope.model = {
                 options: {                                                      //configure the searchDropDown
-                    items: Helpers.Items,                                       //privide the list of items to display 
+                    items: [],                                                  //provide the list of items to display 
+                    id : 'some',
                     showSearch: true,                                           //do show the search input
                     minSearchChars: 2,                                          //start to filter when t least 2 characters are in the input                    
+                    onReady: function () {
+                        gridReady.resolve();
+                    }
                 },                
                 entities: Helpers.Entities               
             };
-        })
-        .factory('Helpers', function () {
-            var items = [{ value: 1, label: 'One' },
-                    { value: 2, label: 'Two' },
-                    { value: 3, label: 'Three' },
-                    { value: 4, label: 'Four' },
-                    { value: 5, label: 'Five' },
-                    { value: 6, label: 'Six' },
-                    { value: 7, label: 'Seven' },
-                    { value: 8, label: 'Eight' },
-                    { value: 9, label: 'Nine' },
-                    { value: 10, label: 'Ten' },
-                    { value: 11, label: 'Eleven' },
-                    { value: 12, label: 'Twelve' },
-                    { value: 13, label: 'Thirteen' }];
 
-            var entities = [{ value: 1 },
-                { value: 1 },
-                { value: 3 },
-                { value: 12 },
-                { value: 6 },
-                { value: 8 },
-                { value: 7 },
-                { value: 4 },
-                { value: 3 },
-                { value: 5 },
-                { value: 2 },
-                { value: 13 }];
+            gridReady.promise.then(function () {
+                $scope.model.options.api.setItems(Helpers.Items);
+            });
+        })
+        .factory('Helpers', function () {            
+
+            var items = [];
+
+            for (var i = 0; i < 500; i++) {
+                items.push({ value: i, label: i.toString() });
+            }
+
+            var entities = [];
+
+            for (var i = 0; i < 20; i++) {
+                entities.push({ value: i });
+            }
 
             return {
                 Items: items,                                                    //provide items to display in the control

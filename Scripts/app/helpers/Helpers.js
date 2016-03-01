@@ -1,4 +1,4 @@
-﻿var Helpers = (function () {
+﻿var AppHelpers = (function () {
     'use strict';
 
     var StringBuilder = (function () {                              //StringBuilder implementation
@@ -26,9 +26,12 @@
         var type = 'Helpers.Dictionary';
 
         var ctor = function () {
-            var store = {};
+            var _store = {};
 
-            Object.defineProperty(this, 'store', { get function() { return store; } });
+            Object.defineProperty(this, 'store', {
+                get: function() {
+                    return _store; }
+            });
         }
 
         ctor.prototype.add = function (key, value) {
