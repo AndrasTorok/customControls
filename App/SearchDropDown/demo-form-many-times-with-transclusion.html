@@ -65,8 +65,9 @@
                         <tbody>
                             <tr ng-repeat="ent in model.entities">
                                 <td>
-                                    <div search-drop-down options="model.options" ng-model="ent.value"
-                                         transclusion-url="./two-column-display.html" required>
+                                    <div search-drop-down-with-transclusion options="model.options" ng-model="ent.value" required>
+                                        <div class="td">{{item.value}}</div>
+                                        <div class="td">{{item.label}}</div>
                                     </div>
                                 </td>
                             </tr>

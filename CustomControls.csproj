@@ -119,10 +119,12 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Content Include="App\SearchDropDown\customControls.css" />
     <Content Include="App\SearchDropDown\customControls.js" />
+    <Content Include="App\SearchDropDown\demo-form-many-times-with-transclusion.html" />
     <Content Include="App\SearchDropDown\demo-form-ts-style.html" />
     <Content Include="App\SearchDropDown\demo-form-many-times.html" />
     <Content Include="App\SearchDropDown\demo-form.html" />
     <Content Include="App\SearchDropDown\search-drop-down.html" />
+    <Content Include="App\SearchDropDown\two-column-display.html" />
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
     <Content Include="Content\bootstrap\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap\bootstrap.css" />

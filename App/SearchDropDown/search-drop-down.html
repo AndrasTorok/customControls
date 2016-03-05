@@ -11,8 +11,8 @@
             <input type="search" ng-model="ctrl.search" ng-change="ctrl.searchChanged()" ng-if="ctrl.showSearch" class="custom-search" />
             <div>
                 <div class="custom-table">
-                    <div class="tr" ng-repeat="item in ctrl.filteredItems" ng-click="ctrl.selected($index)">
-                        <theplaceholder></theplaceholder>
+                    <div class="tr" ng-repeat="item in ctrl.filteredItems" ng-click="ctrl.selected($index)">                        
+                        <the-template-holder></the-template-holder>
                     </div>
                 </div>
             </div>
