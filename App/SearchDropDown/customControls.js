@@ -42,7 +42,7 @@
                 _filteredItems,
                 itemsObserverKey,
                 itemsObserver = instancesDictionary.get($scope.options.id),
-                closedObserverKey = closedObserver.addObserver(function () {
+                closedObserverKey = closedObserver.addObserver(function (value, callingKey) {
                     if (self.opened) $timeout(function () { self.toggleOpen(); }); //close the drop-down
                 });
                             
@@ -72,6 +72,7 @@
             this.toggleOpen = function () {                                         //toggle the expanded state of the control
                 self.opened = !self.opened;                                         //
                 if (self.opened) {                                                  //on opened
+                    closedObserver.notifyObservers(closedObserverKey);              //notify all instances to close
                     if (searchElement) $timeout(function () { searchElement.focus(); }); //and there is a search element the focus it , needs to happen in the next digest cycle
                     else console.log('searchElement not found');
                 } else {                                                            //on closed

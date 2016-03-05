@@ -148,11 +148,11 @@
             this.observers.remove(key);
         }
 
-        ctor.prototype.notifyObservers = function () {
+        ctor.prototype.notifyObservers = function (callerKey) {         //optionally pass the callerKey
             var self = this;
 
             this.observers.forEach(function (key, callback) {
-                callback(self.value);
+                if (key != callerKey) callback(self.value, callerKey);
             });
         }
 
