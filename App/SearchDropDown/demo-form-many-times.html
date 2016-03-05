@@ -4,12 +4,20 @@
     <title>Demo form</title>
     <link href="../../Content/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="customControls.css" rel="stylesheet" />
+    <style>
+        .demo-table{
+            width:400px;
+        }
+        .demo-table th:first-child{
+            width:100px;
+        }
+    </style>
     <script src="../../Scripts/lib/angularJS/angular.js"></script>
     <script src="../../Scripts/app/helpers/Helpers.js"></script>
     <script src="customControls.js"></script>
     <script>
         angular.module('app', ['customControls'])
-        .controller('mainCtrl', function ($scope, Helpers, $timeout, $q) {
+        .controller('mainCtrl', function ($scope, AppHelpers, $timeout, $q) {
             var gridReady = $q.defer();
 
             $scope.model = {
@@ -22,14 +30,14 @@
                         gridReady.resolve();
                     }
                 },
-                entities: Helpers.Entities
+                entities: AppHelpers.Entities
             };
 
             gridReady.promise.then(function () {
-                $scope.model.options.api.setItems(Helpers.Items);
+                $scope.model.options.api.setItems(AppHelpers.Items);
             });
         })
-        .factory('Helpers', function () {
+        .factory('AppHelpers', function () {
 
             var items = [];
 
@@ -56,15 +64,17 @@
         <form name="myForm">
             <div class="row">
                 <div class="col-lg-12">
-                    <table>
+                    <table class="demo-table">
                         <thead>
                             <tr>
                                 <th>Id</th>
+                                <th>Value</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="ent in model.entities">
-                                <td>
+                                <td>Row {{$index}}:</td>
+                                <td>                                    
                                     <div search-drop-down options="model.options" ng-model="ent.value"
                                          transclusion-url="./two-column-display.html" required>
                                     </div>

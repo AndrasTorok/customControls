@@ -9,7 +9,7 @@
     <script src="customControls.js"></script>
     <script>
         angular.module('app', ['customControls'])
-        .controller('mainCtrl', function ($scope, Helpers, $timeout, $q) {
+        .controller('mainCtrl', function ($scope, AppHelpers, $timeout, $q) {
             var gridReady = $q.defer();
 
             $scope.model = {
@@ -22,14 +22,14 @@
                         gridReady.resolve();
                     }
                 },
-                entities: Helpers.Entities
+                entities: AppHelpers.Entities
             };
 
             gridReady.promise.then(function () {
-                $scope.model.options.api.setItems(Helpers.Items);
+                $scope.model.options.api.setItems(AppHelpers.Items);
             });
         })
-        .factory('Helpers', function () {
+        .factory('AppHelpers', function () {
 
             var items = [];
 
@@ -65,7 +65,7 @@
                         <tbody>
                             <tr ng-repeat="ent in model.entities">
                                 <td>
-                                    <div search-drop-down-with-transclusion options="model.options" ng-model="ent.value" required>
+                                    <div search-drop-down-with-transclusion options="model.options" ng-model="ent" required>
                                         <div class="td">{{item.value}}</div>
                                         <div class="td">{{item.label}}</div>
                                     </div>

@@ -2,7 +2,12 @@
 .directive('searchDropDown', function ($compile, $templateRequest, $timeout) {
     'use strict';
 
-    var itemsDictionary = new AppHelpers.Dictionary();                              //static variable
+    var instancesDictionary = new Helpers.Dictionary(),
+        closedObserver = new Helpers.Observer();                                    //on escape close all the existing istances
+
+    document.addEventListener('keyup', function(evt) {                              //on escape
+        if (evt.keyCode == 27) closedObserver.notifyObservers();
+    });
 
     return {
         restrict: 'EA',
@@ -12,7 +17,7 @@
             ngModel: '='
         },
         controllerAs: 'ctrl',                                                       //use controllerAs => ready for TypeScript way to use
-        compile : function(elements, attrs){
+        compile: function (elements, attrs) {
             var element = elements[0],
                 theTemplateHolder = element.querySelector('the-template-holder');
 
@@ -20,7 +25,7 @@
                 $templateRequest(attrs.transclusionUrl).then(function (html) {
                     var template = angular.element(html),                               //get the template 
                         templateEl = angular.element(template);                         //create an HTML element from the template
-                    
+
                     angular.forEach(templateEl, function (el) {                         //for each element from the created template
                         theTemplateHolder.parentElement.appendChild(el);                //append it to the parent element, replacing the placeholder
                     });
@@ -34,18 +39,23 @@
                 focusedElement,                                                     //the element which had the focus at the moment the user clicked on the drop-down
                 minSearchChars = $scope.options.minSearchChars || 2,                //the minimum characters the user should enter the filtering to start
                 buttons,
-                _items,
-                _filteredItems;
+                _filteredItems,
+                itemsObserverKey,
+                itemsObserver = instancesDictionary.get($scope.options.id),
+                closedObserverKey = closedObserver.addObserver(function () {
+                    if (self.opened) $timeout(function () { self.toggleOpen(); }); //close the drop-down
+                });
+                            
+            if (!itemsObserver) {
+                itemsObserver = new Helpers.Observer();
+                instancesDictionary.add($scope.options.id, itemsObserver);
+            }
 
-            Object.defineProperty(this, 'items', {
-                get: function () {
-                    return !$scope.options.id ? _items : itemsDictionary.get($scope.options.id);
-                },
-                set: function (value) {
-                    if (!$scope.options.id) _items = value;
-                    else itemsDictionary.add($scope.options.id, value);
-                }
+            itemsObserverKey = itemsObserver.addObserver(function (items) {
+                $timeout(function () { self.items = items; })
             });
+
+            Object.defineProperty(this, 'items', { writable: true });
 
             Object.defineProperty(this, 'filteredItems', {
                 get: function () {
@@ -71,22 +81,21 @@
                 }
             };
             this.selected = function (index) {                                      //on selecting an item
-                self.selectedItem = self.filteredItems[index];                      //get the selected item from the filtered list
-                $scope.ngModel = self.selectedItem.value;                           //set the model provided using 2 way binding to teh new value
+                var selectedItem = self.filteredItems[index];                       //get the selected item from the filtered list
+                $scope.ngModel = selectedItem.value;                                //set the model provided using 2 way binding to teh new value
                 self.toggleOpen();                                                  //toggle the drop down state to closed
             };
             this.search = null;                                                     //search term
             this.searchChanged = function () { searchChanged(self); };              //on search changed
             this.showSearch = $scope.options.showSearch;                            //persist the showState for more convenient use
-            this.selectedItem = selectedItem($scope.ngModel);                       //set the selected item
 
             $scope.options.api = {                                                  //expose an API to the client
                 setItems: function (items) {                                        //set the items
-                    self.items = self.filteredItems = items;
+                    itemsObserver.value = items;                                    //set the value on the itemsObserver
                 }
             };
 
-            if ($scope.options.onReady) $scope.options.onReady();            
+            if ($scope.options.onReady) $scope.options.onReady();                   //the api was set on the provided options       
 
             $timeout(function () {                                                      //this initialization should run in the next digest cycle
                 if ($scope.options.showSearch) {                                        //if the search input is active
@@ -103,10 +112,9 @@
                 }
             });
 
-            document.addEventListener('keyup', onKeyUp);
-
             $scope.$on('$destroy', function () {                                    //remove the event handlers when the scope is destroyed
-                document.removeEventListener('keyup', onKeyUp);
+                itemsObservers.removeObserver(itemsObserverKey);
+                closedObserver.removeObserver(closedObserverKey);
                 if (buttons) buttons.forEach(function (button) {                    //each of them
                     button.removeEventListener('focus', onFocus);                   //remove on focus 
                 });
@@ -118,11 +126,7 @@
             }
 
             function selectedItem(value) {
-                return self.filteredItems ? self.filteredItems.find(function (item) { return item.value == value; }) : null;
-            }
-
-            function onKeyUp(evt) {                                                 //on escape
-                if (evt.keyCode == 27 && self.opened) $timeout(function () { self.toggleOpen(); }); //close the drop-down
+                return self.items ? self.items.find(function (item) { return item.value == value; }) : null;
             }
 
             function onFocus(evt) {             //on getting the focus save the element which had the focus before it
@@ -136,7 +140,8 @@
 
     var url = './search-drop-down.html',
         doOptimizeItemsDisplay = false,
-        itemsDictionary = new AppHelpers.Dictionary();
+        itemsDictionary = new Helpers.Dictionary(),
+        itemsObservers = new Helpers.Observer();
 
     return {
         restrict: 'EA',
@@ -154,7 +159,10 @@
                 minSearchChars = $scope.options.minSearchChars || 2,                //the minimum characters the user should enter the filtering to start
                 buttons,
                 _items,
-                _filteredItems;
+                _filteredItems,
+                itemsObserverKey = itemsObservers.addObserver(function (items) {
+                    _items = items;
+                });
 
             Object.defineProperty(this, 'items', {
                 get: function () {
@@ -201,7 +209,8 @@
 
             $scope.options.api = {                                                  //expose an API to the client
                 setItems: function (items) {                                        //set the items
-                    self.items = self.filteredItems = items;
+                    //self.items = self.filteredItems = items;
+                    itemsObservers.value = items;
                 }
             };
 
@@ -238,6 +247,7 @@
             document.addEventListener('keyup', onKeyUp);
 
             $scope.$on('$destroy', function () {                                    //remove the event handlers when the scope is destroyed
+                itemsObservers.removeObserver(itemsObserverKey);
                 document.removeEventListener('keyup', onKeyUp);
                 if (buttons) buttons.forEach(function (button) {                    //each of them
                     button.removeEventListener('focus', onFocus);                   //remove on focus 

@@ -1,4 +1,4 @@
-﻿var AppHelpers = (function () {
+﻿var Helpers = (function () {
     'use strict';
 
     var StringBuilder = (function () {                              //StringBuilder implementation
@@ -117,9 +117,52 @@
         return ctor;
     })();
 
+    var Observer = (function () {
+
+        var ctor = function () {
+            var self = this,
+                _value;
+
+            Object.defineProperty(this, 'value', {
+                get: function () { return _value; },
+                set: function (value) {
+                    _value = value;
+                    self.notifyObservers();
+                }
+            });
+
+            Object.defineProperty(this, 'observers', {
+                value: new Dictionary()
+            });
+        }
+
+        ctor.prototype.addObserver = function (callback) {
+            var key = Guid.newGuid();
+
+            this.observers.add(key, callback);
+
+            return key;
+        }
+
+        ctor.prototype.removeObserver = function (key) {
+            this.observers.remove(key);
+        }
+
+        ctor.prototype.notifyObservers = function () {
+            var self = this;
+
+            this.observers.forEach(function (key, callback) {
+                callback(self.value);
+            });
+        }
+
+        return ctor;
+    })();
+
     return {
         StringBuilder : StringBuilder, 
         Dictionary: Dictionary,
-        Guid: Guid
+        Guid: Guid,
+        Observer: Observer
     };
 })();
