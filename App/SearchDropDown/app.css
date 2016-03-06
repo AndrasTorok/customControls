@@ -1,0 +1,7 @@
+﻿.demo-table {
+    width: 400px;
+}
+
+    .demo-table th:first-child {
+        width: 100px;
+    }

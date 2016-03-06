@@ -12,19 +12,7 @@
 </head>
 <body>
     <article class="container" ng-controller="mainCtrl">
-        <h2>Demo Form</h2>
-
-        <div class="row">
-            <div class="col-lg-2">
-                Another Options
-            </div>
-            <div class="col-lg-4">
-                <div search-drop-down options="model.anotherOptions" ng-model="model.anotherValue"
-                     transclusion-url="./one-column-display.html" required>
-                </div>
-            </div>
-        </div>
-
+        <h2>Styled drop-down</h2>
         <form name="myForm">
             <div class="row">
                 <div class="col-lg-12">
@@ -38,9 +26,10 @@
                         <tbody>
                             <tr ng-repeat="ent in model.entities">
                                 <td>Row {{$index}}:</td>
-                                <td>                                    
-                                    <div search-drop-down options="model.options" ng-model="ent.value"
-                                         transclusion-url="./two-column-display.html" required>
+                                <td>
+                                    <div search-drop-down-with-transclusion options="model.options" ng-model="ent.value" required>
+                                        <div class="td">{{item.value}}</div>
+                                        <div class="td">{{item.label}}</div>
                                     </div>
                                 </td>
                             </tr>

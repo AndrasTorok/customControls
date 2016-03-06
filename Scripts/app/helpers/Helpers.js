@@ -121,18 +121,19 @@
 
         var ctor = function () {
             var self = this,
-                _value;
+                _value,
+                _observers = new Dictionary();
 
             Object.defineProperty(this, 'value', {
                 get: function () { return _value; },
                 set: function (value) {
                     _value = value;
-                    self.notifyObservers();
+                    self.notifyObservers(value);
                 }
             });
 
             Object.defineProperty(this, 'observers', {
-                value: new Dictionary()
+                get: function () { return _observers; }
             });
         }
 

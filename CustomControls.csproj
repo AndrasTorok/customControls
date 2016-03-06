@@ -117,12 +117,14 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Content Include="App\SearchDropDown\app.css" />
+    <Content Include="App\SearchDropDown\app.js" />
     <Content Include="App\SearchDropDown\customControls.css" />
     <Content Include="App\SearchDropDown\customControls.js" />
-    <Content Include="App\SearchDropDown\demo-form-many-times-with-transclusion.html" />
+    <Content Include="App\SearchDropDown\demo-form-with-transclusion.html" />
     <Content Include="App\SearchDropDown\demo-form-ts-style.html" />
-    <Content Include="App\SearchDropDown\demo-form-many-times.html" />
     <Content Include="App\SearchDropDown\demo-form.html" />
+    <Content Include="App\SearchDropDown\one-column-display.html" />
     <Content Include="App\SearchDropDown\search-drop-down.html" />
     <Content Include="App\SearchDropDown\two-column-display.html" />
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
