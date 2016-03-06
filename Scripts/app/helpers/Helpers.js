@@ -160,10 +160,27 @@
         return ctor;
     })();
 
+    var StopWatch = (function () {
+
+        var ctor = function () {
+            var startTime = Date.now(),
+                stopTime;
+
+            this.start = function () { startTime = Date.now(); }
+            this.stop = function () { stopTime = Date.now(); }
+            this.duration = function () {
+                return stopTime - startTime;
+            }
+        }        
+
+        return ctor;
+    })();
+
     return {
         StringBuilder : StringBuilder, 
         Dictionary: Dictionary,
         Guid: Guid,
-        Observer: Observer
+        Observer: Observer,
+        StopWatch: StopWatch
     };
 })();

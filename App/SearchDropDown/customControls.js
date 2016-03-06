@@ -7,7 +7,7 @@
 
     document.addEventListener('keyup', function(evt) {                              //on escape
         if (evt.keyCode == 27) closedObserver.notifyObservers();
-    });
+    });   
 
     return {
         restrict: 'EA',
@@ -93,7 +93,9 @@
 
             $scope.options.api = {                                                  //expose an API to the client
                 setItems: function (items) {                                        //set the items
-                    itemsObserver.value = items;                                    //set the value on the itemsObserver
+                    $timeout(function () {                                          //needs to happen in next digest cycle
+                        itemsObserver.value = items;                                //set the value on the itemsObserver
+                    });
                 }
             };
 
@@ -115,7 +117,7 @@
             });
 
             $scope.$on('$destroy', function () {                                    //remove the event handlers when the scope is destroyed
-                itemsObservers.removeObserver(itemsObserverKey);
+                itemsObserver.removeObserver(itemsObserverKey);
                 closedObserver.removeObserver(closedObserverKey);
                 if (buttons) buttons.forEach(function (button) {                    //each of them
                     button.removeEventListener('focus', onFocus);                   //remove on focus 
@@ -274,5 +276,29 @@
             }
         }
     };
-});
+})
+.factory('CustomControlsHelper', function ($q, $timeout) {
+
+    var SearchDropDownOptions = (function () {
+
+        var ctor = function (params) {
+            var onReadyDefer = $q.defer();
+
+            onReadyDefer.promise.then(function () {                 //onReady needs to be called once per SearchDropDownOptions instance
+                $timeout(function () { params.onReady(); });        //in next digest cycle to give time all the controls be created
+            });
+
+            this.id = Helpers.Guid.newGuid();
+            this.showSearch = params.showSearch;
+            this.minSearchChars = params.minSearchChars || 2;
+            this.onReady = function () { onReadyDefer.resolve(); }  //onReeady, will be called by all control instances
+        }
+
+        return ctor;
+    })();
+
+    return {
+        SearchDropDownOptions: SearchDropDownOptions
+    };
+})
 

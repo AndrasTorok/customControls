@@ -1,45 +1,64 @@
 ﻿angular.module('app', ['customControls'])
-.controller('mainCtrl', function ($scope, AppHelpers, $timeout, $q) {
+.controller('mainCtrl', function ($scope, AppHelpers, $timeout, $q, CustomControlsHelper) {
 
     $scope.model = {
-        options: {                                                      //configure the searchDropDown
-            items: [],                                                  //provide the list of items to display
-            id: 'some',
+        options: new CustomControlsHelper.SearchDropDownOptions({       //configure the searchDropDown
             showSearch: true,                                           //do show the search input
             minSearchChars: 2,                                          //start to filter when t least 2 characters are in the input
             onReady: function () {
-                $scope.model.options.api.setItems(AppHelpers.Items);
+                $scope.model.options.api.setItems(new AppHelpers.ItemProvider(500));
             }
-        },
-        entities: AppHelpers.Entities,
-        anotherOptions: {                                               //configure the searchDropDown
-            items: [],                                                  //provide the list of items to display
-            id: 'another',
+        }),
+        entities: new AppHelpers.EntityProvider(100),
+        anotherOptions: new CustomControlsHelper.SearchDropDownOptions({//configure the searchDropDown
             showSearch: true,                                           //do show the search input
             minSearchChars: 2,                                          //start to filter when t least 2 characters are in the input
             onReady: function () {
-                $scope.model.anotherOptions.api.setItems(AppHelpers.Items);
+                $scope.model.anotherOptions.api.setItems(new AppHelpers.ItemProvider(500));
             }
-        },
-        anotherValue : 23
-    };   
+        }),
+        anotherValue: 23
+    };
+
+    $timeout(function () {
+        $scope.model.entities = new AppHelpers.EntityProvider(200);
+        $scope.model.options.api.setItems(new AppHelpers.ItemProvider(1000));
+    }, 1000);
 })
-.factory('AppHelpers', function () {
-    var maxItems = 1000,
-        maxEntities = 100,
-        items = [],
-        entities = [];
+.factory('AppHelpers', function () {    
 
-    for (var i = 0; i < maxItems; i++) {
-        items.push({ value: i, label: i.toString() });
-    }
+    var ItemProvider = (function () {
 
-    for (var i = 0; i < maxEntities; i++) {
-        entities.push({ value: i });
-    }
+        var ctor = function (maxItems) {
+            var items = [];
+
+            for (var i = 0; i < maxItems; i++) {
+                items.push({ value: i, label: i.toString() });
+            }
+
+            return items;
+        }
+
+        return ctor;
+    })();
+
+    var EntityProvider = (function () {
+
+        var ctor = function (maxEntities) {
+            var entities = [];
+
+            for (var i = 0; i < maxEntities; i++) {
+                entities.push({ value: i });
+            }
+
+            return entities;
+        }
+
+        return ctor;
+    })();
 
     return {
-        Items: items,                                                    //provide items to display in the control
-        Entities: entities
+        ItemProvider: ItemProvider,                                                    
+        EntityProvider: EntityProvider
     };
 });
