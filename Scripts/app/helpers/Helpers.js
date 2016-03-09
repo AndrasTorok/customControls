@@ -176,6 +176,96 @@
         return ctor;
     })();
 
+    var Entity = (function () {
+
+        var ctor = function () {
+
+        }
+
+        ctor.clone = function (entity) {
+            var clonedEntity = {};
+
+            for (var prop in entity) {
+                if (entity.hasOwnProperty(prop)) clonedEntity[prop] = entity[prop];
+            }
+
+            return clonedEntity;
+        }
+
+        ctor.equal = function (first, second) {
+            for (var prop in first) {
+                if (first.hasOwnProperty(prop) && first[prop] !== second[prop]) return false;
+            }
+
+            for (var prop in second) {
+                if (second.hasOwnProperty(prop) && second[prop] !== first[prop]) return false;
+            }
+
+            return true;
+        }
+
+        return ctor;
+    })();
+
+    var Entities = (function () {
+
+        var ctor = function (params) {
+            var clonedEntities = clone(params.entities);
+
+            Object.defineProperty(this, 'entities', { get: function () { return params.entities; } });
+            Object.defineProperty(this, 'pKeys', { get: function () { return params.pKeys; } });
+            Object.defineProperty(this, 'clonedEntities', { get: function () { return clonedEntities; } });
+        }
+
+        ctor.prototype.changed = function () {
+            var self = this,
+                addedEntities = [],
+                changedEntities = [],
+                deletedEntities = [];
+
+            this.entities.forEach(function (entity) {
+                var clonedEntity = findByPK(self.clonedEntities, self.pKeys);
+
+                if (!clonedEntity) addedEntities.push(entity);
+                else if (!Entity.equal(entity, clonedEntity)) changedEntities.push(entity);
+            });
+
+            this.clonedEntities.forEach(function (clonedEntity) {
+                if (!findByPK(self.entities, self.pKeys)) deletedEntities.push(clonedEntity);
+            });
+
+            return {
+                added: addedEntities,
+                changed: changedEntities,
+                deleted: deletedEntities
+            };
+        }
+
+        function clone(entities) {
+            var clonedEntities = [];
+
+            entities.forEach(function (entity) {
+                clonedEntities.push(Entity.clone(entity));
+            });
+
+            return clonedEntities;
+        }
+
+        function findByPK(entities, pKeys) {
+            var entity = entities.find(function (searchedEntity) {
+                pKeys.forEach(function (key) {
+                    if (searchedEntity[key] !== entity[key]) return false;
+                });
+
+                return true;
+            });
+
+            return entity;
+        }
+
+        return ctor;
+    })();
+
     return {
         StringBuilder : StringBuilder, 
         Dictionary: Dictionary,
