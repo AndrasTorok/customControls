@@ -132,6 +132,9 @@
     <Content Include="Content\bootstrap\bootstrap.css" />
     <Content Include="Content\bootstrap\bootstrap.min.css" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\jasmine\jasmine.css" />
+    <Content Include="Content\jasmine\jasmine_favicon.png" />
+    <Content Include="css\jasmine.css" />
     <Content Include="Global.asax" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
@@ -141,6 +144,12 @@
     <Content Include="Content\bootstrap\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap\bootstrap.css.map" />
+    <Content Include="Scripts\jasmine\boot.js" />
+    <Content Include="Scripts\jasmine\console.js" />
+    <Content Include="Scripts\jasmine\jasmine-html.js" />
+    <Content Include="Scripts\jasmine\jasmine.js" />
+    <Content Include="Scripts\lib\jasmine\jasmine-html.js" />
+    <Content Include="Scripts\lib\jasmine\jasmine.js" />
     <Content Include="Scripts\lib\angularJS\angular-animate.js" />
     <Content Include="Scripts\lib\angularJS\angular-animate.min.js" />
     <Content Include="Scripts\lib\angularJS\angular-aria.js" />
@@ -928,6 +937,8 @@
     <Content Include="Scripts\app\helpers\Helpers.js" />
     <Content Include="Scripts\lib\jQuery\jquery-1.9.1.js" />
     <Content Include="Scripts\lib\jQuery\jquery-1.9.1.min.js" />
+    <Content Include="Scripts\tests\helpers\helpers.html" />
+    <Content Include="Scripts\tests\helpers\helpersTest.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

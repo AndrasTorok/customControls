@@ -182,26 +182,26 @@
 
         }
 
-        ctor.clone = function (entity) {
+        ctor.clone = function (entity) {                                        //clone by creating a shallow copy 
             var clonedEntity = {};
 
-            for (var prop in entity) {
-                if (entity.hasOwnProperty(prop)) clonedEntity[prop] = entity[prop];
+            for (var prop in entity) {                                          //loop throug the properties
+                if (entity.hasOwnProperty(prop)) clonedEntity[prop] = entity[prop]; //copy the own properties
             }
 
             return clonedEntity;
         }
 
-        ctor.equal = function (first, second) {
-            for (var prop in first) {
+        ctor.equal = function (first, second) {                                 //check equality
+            for (var prop in first) {                                           //by looping through the properties of the fist
                 if (first.hasOwnProperty(prop) && first[prop] !== second[prop]) return false;
             }
 
-            for (var prop in second) {
+            for (var prop in second) {                                          //... and second entity provided
                 if (second.hasOwnProperty(prop) && second[prop] !== first[prop]) return false;
             }
 
-            return true;
+            return true;                                                        //if both are equal then is a match
         }
 
         return ctor;
@@ -223,15 +223,15 @@
                 changedEntities = [],
                 deletedEntities = [];
 
-            this.entities.forEach(function (entity) {
-                var clonedEntity = findByPK(self.clonedEntities, self.pKeys);
+            this.entities.forEach(function (entity) {                           //loop through the entities
+                var clonedEntity = findByPK(self, self.clonedEntities, entity); //find the cloned entity
 
-                if (!clonedEntity) addedEntities.push(entity);
-                else if (!Entity.equal(entity, clonedEntity)) changedEntities.push(entity);
+                if (!clonedEntity) addedEntities.push(entity);                  //no cloned entity, must be newly added = added
+                else if (!Entity.equal(entity, clonedEntity)) changedEntities.push(entity); //entity chnged compared to cloned one => changed
             });
 
-            this.clonedEntities.forEach(function (clonedEntity) {
-                if (!findByPK(self.entities, self.pKeys)) deletedEntities.push(clonedEntity);
+            this.clonedEntities.forEach(function (clonedEntity) {               //loop through the cloned entities
+                if (!findByPK(self, self.entities, clonedEntity)) deletedEntities.push(clonedEntity);   //not found then must be deleted => deleted
             });
 
             return {
@@ -241,7 +241,7 @@
             };
         }
 
-        function clone(entities) {
+        function clone(entities) {                                              //clone each entity to be able to compare later
             var clonedEntities = [];
 
             entities.forEach(function (entity) {
@@ -249,15 +249,17 @@
             });
 
             return clonedEntities;
-        }
+        }        
 
-        function findByPK(entities, pKeys) {
-            var entity = entities.find(function (searchedEntity) {
-                pKeys.forEach(function (key) {
-                    if (searchedEntity[key] !== entity[key]) return false;
+        function findByPK(self, entities, entityToFind) {                       //find the entity by the PKs
+            var entity = entities.find(function (searchedEntity) {              //find the entity
+                var isMatch = true;
+
+                self.pKeys.forEach(function (key) {                             //by looping through the PKs
+                    if (searchedEntity[key] !== entityToFind[key]) isMatch = false;//and test for equality, exit if does not equal
                 });
 
-                return true;
+                return isMatch;                                                    //if reached here then is a match
             });
 
             return entity;
@@ -267,10 +269,12 @@
     })();
 
     return {
-        StringBuilder : StringBuilder, 
+        StringBuilder: StringBuilder,
         Dictionary: Dictionary,
         Guid: Guid,
         Observer: Observer,
-        StopWatch: StopWatch
+        StopWatch: StopWatch,
+        Entity: Entity,
+        Entities: Entities
     };
 })();
