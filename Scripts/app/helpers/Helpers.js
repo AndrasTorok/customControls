@@ -4,19 +4,20 @@
     var StringBuilder = (function () {                              //StringBuilder implementation
 
         var ctor = function () {
-            var sb = [];
+            var store = [];
 
-            Object.defineProperty(this, 'store', { get function() { return store; } });
-
-            this.append(arguments);
+            Object.defineProperty(this, 'store', { get : function() { return store; } });
+            
+            this.append.apply(this, arguments);                     //re-apply the arguments to append
         }
 
         ctor.prototype.append = function () {
             for (var i = 0; i < arguments.length; i++) this.store.push(arguments[i]);
+            return this;                                            //make it fluent
         }
 
-        ctor.prototype.toString = function () {
-            return this.store.join();
+        ctor.prototype.toString = function (joinStr) {
+            return this.store.join(joinStr !== undefined ? joinStr : '');
         }
 
         return ctor;
@@ -48,7 +49,7 @@
 
         ctor.prototype.containsKey = function (key) {
             return key in this.store;
-        }
+        }        
 
         ctor.prototype.forEach = function (callback) {
             if (typeof (callback) != 'function') throw new Error(type + '.forEach(callback): callback should be a function.');
@@ -58,18 +59,44 @@
             }
         }
 
-        ctor.prototype.first = function (predicate) {
+        ctor.prototype.filter = function (predicate) {
             throwErrorIfPredicateNotFunction('first', predicate);
+            var filteredStore = new ctor();
 
             this.forEach(function (key, value) {
-                if (predicate(key, value)) return { key: key, value: value };
+                if (predicate(key, value)) filteredStore.add(key, value);
             });
 
-            return null;
+            return filteredStore;
         }
 
-        ctor.propertyIsEnumerable.any = function (predicate) {
-            throwErrorIfPredicateNotFunction('any', predicate);
+        ctor.prototype.keys = function (predicate) {
+            var keys = [];
+
+            this.forEach(function (key, value) {
+                if (!predicate || predicate(key, value)) keys.push(key);
+            });
+
+            return keys;
+        }
+
+        ctor.prototype.first = function (predicate) {
+            if (predicate) throwErrorIfPredicateNotFunction('first', predicate);        //predicate is optional
+            var self = this,
+                first = null;
+
+            this.forEach(function (key, value) {
+                if (!predicate || predicate(key, value)) {
+                    first = self.get(key);
+                    return;                                             //stop the furter execution of foreach loop
+                }
+            });
+
+            return first;
+        }
+
+        ctor.prototype.any = function (predicate) {
+            throwErrorIfPredicateNotFunction('first', predicate);
 
             this.forEach(function (key, value) {
                 if (predicate(key, value)) return true;
@@ -78,14 +105,26 @@
             return false;
         }
 
-        ctor.propertyIsEnumerable.all = function (predicate) {
-            throwErrorIfPredicateNotFunction('all', predicate);
+        ctor.prototype.all = function (predicate) {
+            throwErrorIfPredicateNotFunction('first', predicate);
 
             this.forEach(function (key, value) {
                 if (!predicate(key, value)) return false;
             });
 
             return true;
+        }
+
+        ctor.fromArray = function (array, pK) {
+            if (Array.isArray(array) && pK) {
+                var dictioanry = new ctor();
+
+                array.forEach(function (item) {
+                    dictioanry.add(item[pK], item);
+                });
+
+                return dictioanry;
+            } else throw new Error(new StringBuilder(type, '.fromArray(array, pK) wrong arguments.').toString());
         }
 
         function throwErrorIfPredicateNotFunction(fctName, predicate) {
@@ -122,39 +161,108 @@
         var ctor = function () {
             var self = this,
                 _value,
-                _observers = new Dictionary();
+                _listeners = new Dictionary();
 
             Object.defineProperty(this, 'value', {
                 get: function () { return _value; },
                 set: function (value) {
                     _value = value;
-                    self.notifyObservers(value);
+                    self.notifyListeners(value);
                 }
             });
 
-            Object.defineProperty(this, 'observers', {
-                get: function () { return _observers; }
+            Object.defineProperty(this, 'listeners', {
+                get: function () { return _listeners; }
             });
         }
 
-        ctor.prototype.addObserver = function (callback) {
+        ctor.prototype.addListener = function (callback) {
             var key = Guid.newGuid();
 
-            this.observers.add(key, callback);
+            this.listeners.add(key, callback);
 
             return key;
         }
 
-        ctor.prototype.removeObserver = function (key) {
-            this.observers.remove(key);
+        ctor.prototype.removeListener = function (key) {
+            this.listeners.remove(key);
         }
 
-        ctor.prototype.notifyObservers = function (callerKey) {         //optionally pass the callerKey
+        ctor.prototype.notifyListeners = function (callerKey) {         //optionally pass the callerKey
             var self = this;
 
-            this.observers.forEach(function (key, callback) {
+            this.listeners.forEach(function (key, callback) {
                 if (key != callerKey) callback(self.value, callerKey);
             });
+        }        
+
+        return ctor;
+    })();
+
+    var EventEmitter = (function () {
+
+        var ctor = function () {
+            var _events = new Dictionary();           
+
+            Object.defineProperty(this, 'events', {
+                get: function () { return _events; }
+            });
+        }
+
+        ctor.prototype.on = function (type, listener) {
+            var listeners = this.events.get(type);
+            if (!listeners) {
+                listeners = new Dictionary();
+                this.events.add(type, listeners);
+            }
+            listeners.add(listener, listener);
+        }
+
+        ctor.prototype.removeListener = function (type, listener) {
+            var listeners = this.events.get(type);
+            if (listeners) listeners.remove(listener);
+        }
+
+        ctor.prototype.emit = function (type, value) {
+            var listeners = this.events.get(type);
+            if (listeners) listeners.forEach(function (listener) {
+                listener(value);
+            });
+        }
+
+        return ctor;
+    })();
+
+    var Dispatcher = (function () {
+
+        var ctor = function () {
+            var _listeners = new Dictionary();           
+
+            Object.defineProperty(this, 'listeners', {
+                get: function () { return _listeners; }
+            });
+        }
+
+        ctor.prototype.addListener = function (callback) {
+            var key = Guid.newGuid();
+
+            this.listeners.add(key, callback);
+
+            return key;
+        }
+
+        ctor.prototype.removeListener = function (key) {
+            this.listeners.remove(key);
+        }
+
+        ctor.prototype.dispatch = function (action) {
+            this.listeners.forEach(function (key, callback) {
+                callback(action);
+            });
+        }
+
+        ctor.prototype.waitFor = function (keys) {                          //arrays of keys
+
         }
 
         return ctor;

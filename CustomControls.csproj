@@ -20,6 +20,9 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,6 +43,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -65,9 +72,6 @@
     <Reference Include="Microsoft.Web.Mvc.FixedDisplayModes, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.Mvc.FixedDisplayModes.1.0.0\lib\net40\Microsoft.Web.Mvc.FixedDisplayModes.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http">
     </Reference>
@@ -117,6 +121,9 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Content Include="App\ReactJS\js\app.js" />
+    <Content Include="App\ReactJS\js\components\Forum.react.js" />
+    <Content Include="App\ReactJS\ReactJsExample.html" />
     <Content Include="App\SearchDropDown\app.css" />
     <Content Include="App\SearchDropDown\app.js" />
     <Content Include="App\SearchDropDown\customControls.css" />
@@ -127,6 +134,13 @@
     <Content Include="App\SearchDropDown\one-column-display.html" />
     <Content Include="App\SearchDropDown\search-drop-down.html" />
     <Content Include="App\SearchDropDown\two-column-display.html" />
+    <Content Include="App\UsingReactJs\SimpleExample.js">
+      <DependentUpon>SimpleExample.jsx</DependentUpon>
+    </Content>
+    <Content Include="App\UsingReactJs\SimpleExample.min.js">
+      <DependentUpon>SimpleExample.js</DependentUpon>
+    </Content>
+    <Content Include="App\UsingReactJs\SimpleExmple.html" />
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
     <Content Include="Content\bootstrap\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap\bootstrap.css" />
@@ -134,7 +148,6 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\jasmine\jasmine.css" />
     <Content Include="Content\jasmine\jasmine_favicon.png" />
-    <Content Include="css\jasmine.css" />
     <Content Include="Global.asax" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
@@ -144,10 +157,8 @@
     <Content Include="Content\bootstrap\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap\bootstrap.css.map" />
-    <Content Include="Scripts\jasmine\boot.js" />
-    <Content Include="Scripts\jasmine\console.js" />
-    <Content Include="Scripts\jasmine\jasmine-html.js" />
-    <Content Include="Scripts\jasmine\jasmine.js" />
+    <Content Include="Scripts\lib\jasmine\boot.js" />
+    <Content Include="Scripts\lib\jasmine\console.js" />
     <Content Include="Scripts\lib\jasmine\jasmine-html.js" />
     <Content Include="Scripts\lib\jasmine\jasmine.js" />
     <Content Include="Scripts\lib\angularJS\angular-animate.js" />
@@ -187,6 +198,11 @@
     <Content Include="Scripts\lib\angularJS\angular-aria.min.js.map" />
     <Content Include="Scripts\lib\angularJS\angular-animate.min.js.map" />
     <Content Include="Scripts\lib\angularJS\angular.min.js.map" />
+    <None Include="App\UsingReactJs\SimpleExample.jsx" />
+    <None Include="compilerconfig.json" />
+    <None Include="compilerconfig.json.defaults">
+      <DependentUpon>compilerconfig.json</DependentUpon>
+    </None>
     <None Include="Scripts\lib\jQuery\jquery-1.9.1.intellisense.js" />
     <Content Include="Scripts\lib\angularJS\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\lib\angularJS\i18n\angular-locale_aa-er.js" />
@@ -937,6 +953,14 @@
     <Content Include="Scripts\app\helpers\Helpers.js" />
     <Content Include="Scripts\lib\jQuery\jquery-1.9.1.js" />
     <Content Include="Scripts\lib\jQuery\jquery-1.9.1.min.js" />
+    <Content Include="Scripts\lib\react\react-dom-server.js" />
+    <Content Include="Scripts\lib\react\react-dom-server.min.js" />
+    <Content Include="Scripts\lib\react\react-dom.js" />
+    <Content Include="Scripts\lib\react\react-dom.min.js" />
+    <Content Include="Scripts\lib\react\react-with-addons.js" />
+    <Content Include="Scripts\lib\react\react-with-addons.min.js" />
+    <Content Include="Scripts\lib\react\react.js" />
+    <Content Include="Scripts\lib\react\react.min.js" />
     <Content Include="Scripts\tests\helpers\helpers.html" />
     <Content Include="Scripts\tests\helpers\helpersTest.js" />
     <Content Include="Web.config" />
@@ -986,6 +1010,13 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Import Project="..\packages\BuildWebCompiler.1.10.306\build\BuildWebCompiler.targets" Condition="Exists('..\packages\BuildWebCompiler.1.10.306\build\BuildWebCompiler.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\BuildWebCompiler.1.10.306\build\BuildWebCompiler.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\BuildWebCompiler.1.10.306\build\BuildWebCompiler.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
