@@ -132,7 +132,7 @@ describe('Entities', function () {
         persons.push(new Person('Lady', 'Gaga'));                   //add Lady Gaga
         persons.splice(0, 1);                                       //delete David Bowie
 
-        var changes = entities.changed();
+        var changes = entities.changes;
 
         expect(changes.added.length).toEqual(1);
         expect(changes.added[0].lastName).toEqual('Gaga');
@@ -152,7 +152,7 @@ describe('Entities', function () {
 
         personsGenres[1].genre = Genre.Pop;                                     //when changed and item in table entities with composed PK
 
-        var changes = entities.changed();                                       //changed result will be
+        var changes = entities.changes;                                         //changed result will be
 
         expect(changes.changed.length).toEqual(0);                              //no entities changed, but...
 

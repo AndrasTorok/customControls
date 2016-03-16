@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="app">
+<head>
+    <title>OncePerDigestCycle</title>
+    <script src="../../Scripts/lib/angularJS/angular.js"></script>
+    <link href="../../Content/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <script>
+        angular.module('app', [])
+        .controller('mainCtlr', function ($scope, Helpers) {
+
+            $scope.model = {
+                person: new Helpers.Person($scope, 'Adam', 'Sandler')
+            };
+        })
+        .factory('Helpers', function () {
+
+            var SingletonPerDigestCycle = (function () {
+
+                var ctor = function (callback, scope) {
+                    var self = this,
+                        value,
+                        digestCycleId;
+
+                    this.callback = callback;
+                    this.scope = scope;
+
+                    Object.defineProperty(this, 'value', {
+                        get: function () {
+                            if (self.scope.$id != digestCycleId) {
+                                digestCycleId = self.scope.$id;
+                                value = callback();
+                            }
+                            return value;
+                        }
+                    });
+                }
+
+                return ctor;
+            })();
+
+            var Person = (function () {
+
+                var ctor = function (scope, firstName, lastName) {
+                    var self = this;
+
+                    this.scope = scope;
+                    this.firstName = firstName;
+                    this.lastName = lastName;
+                    this.isValidSPDC = new SingletonPerDigestCycle(function () {
+                        return !!self.firstName && !!self.lastName;
+                    }, scope);
+                }
+
+                ctor.prototype.isValid = function () {
+                    this.isValidSPDC.value;
+                }
+
+                return ctor;
+            })();
+
+            return {
+                Person: Person
+            };
+        })
+    </script>
+</head>
+<body>
+    <article class="container" ng-controller="mainCtlr">
+        <form>
+            <section class="row">
+                <section class="col-lg-2">
+                    First Name
+                </section>
+                <section class="col-lg=-10">
+                    <input type="text" ng-model="model.person.firstName" />
+                </section>
+            </section>
+            <section class="row">
+                <section class="col-lg-2">
+                    Last Name
+                </section>
+                <section class="col-lg=-10">
+                    <input type="text" ng-model="model.person.lastName" />
+                </section>
+            </section>
+            <setion class="row">
+                <section class="col-lg-2 col-offset-2">
+                    <button type="button" class="btn btn-primary" ng-disabled="!model.person.isValid()">Save</button>
+                </section>
+                <section class="col-lg-2 col-offset-2">
+                    <button type="button" class="btn btn-primary" ng-disabled="model.person.isValid()">Undo</button>
+                </section>
+            </setion>
+        </form>
+    </article>
+</body>
+</html>

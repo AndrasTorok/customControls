@@ -134,6 +134,7 @@
     <Content Include="App\SearchDropDown\one-column-display.html" />
     <Content Include="App\SearchDropDown\search-drop-down.html" />
     <Content Include="App\SearchDropDown\two-column-display.html" />
+    <Content Include="App\UniquePerDigestCycle\OncePerDigestCycle.html" />
     <Content Include="App\UsingReactJs\SimpleExample.js">
       <DependentUpon>SimpleExample.jsx</DependentUpon>
     </Content>

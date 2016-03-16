@@ -20,9 +20,3 @@ C:\Users\Andras\Documents\Visual Studio 2013\Projects\Learning\CustomControls\bi
 C:\Users\Andras\Documents\Visual Studio 2013\Projects\Learning\CustomControls\obj\Debug\CustomControls.csprojResolveAssemblyReference.cache
 C:\Users\Andras\Documents\Visual Studio 2013\Projects\Learning\CustomControls\obj\Debug\CustomControls.dll
 C:\Users\Andras\Documents\Visual Studio 2013\Projects\Learning\CustomControls\obj\Debug\CustomControls.pdb
-C:\Users\Andras\Documents\Visual Studio 2013\Projects\Learning\CustomControls\bin\System.Net.Http.Formatting.dll
-C:\Users\Andras\Documents\Visual Studio 2013\Projects\Learning\CustomControls\bin\System.Web.Http.dll
-C:\Users\Andras\Documents\Visual Studio 2013\Projects\Learning\CustomControls\bin\System.Web.Http.WebHost.dll
-C:\Users\Andras\Documents\Visual Studio 2013\Projects\Learning\CustomControls\bin\System.Net.Http.Formatting.xml
-C:\Users\Andras\Documents\Visual Studio 2013\Projects\Learning\CustomControls\bin\System.Web.Http.xml
-C:\Users\Andras\Documents\Visual Studio 2013\Projects\Learning\CustomControls\bin\System.Web.Http.WebHost.xml

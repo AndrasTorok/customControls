@@ -318,36 +318,29 @@
     var Entities = (function () {
 
         var ctor = function (params) {
-            var clonedEntities = clone(params.entities);
+            var self = this,
+                clonedEntities = clone(params.entities),
+                entitiesKey = toKey(params.entities),
+                changes;
+
+            this.entitiesKey = toKey(params.entities);
 
             Object.defineProperty(this, 'entities', { get: function () { return params.entities; } });
             Object.defineProperty(this, 'pKeys', { get: function () { return params.pKeys; } });
             Object.defineProperty(this, 'clonedEntities', { get: function () { return clonedEntities; } });
-        }
+            Object.defineProperty(this, 'changes', {
+                get: function () {
+                    var currentEntitiesKey = toKey(self.entities);                     //entities Key
 
-        ctor.prototype.changed = function () {
-            var self = this,
-                addedEntities = [],
-                changedEntities = [],
-                deletedEntities = [];
+                    if (currentEntitiesKey != self.entitiesKey) {                       //if entities Key has changes to last time was checked
+                        changes = changed(self);                                        //recalculate changes
+                        entitiesKey = currentEntitiesKey;                               //set the new key to compare next time
+                    }
 
-            this.entities.forEach(function (entity) {                           //loop through the entities
-                var clonedEntity = findByPK(self, self.clonedEntities, entity); //find the cloned entity
-
-                if (!clonedEntity) addedEntities.push(entity);                  //no cloned entity, must be newly added = added
-                else if (!Entity.equal(entity, clonedEntity)) changedEntities.push(entity); //entity chnged compared to cloned one => changed
+                    return changes;
+                }
             });
-
-            this.clonedEntities.forEach(function (clonedEntity) {               //loop through the cloned entities
-                if (!findByPK(self, self.entities, clonedEntity)) deletedEntities.push(clonedEntity);   //not found then must be deleted => deleted
-            });
-
-            return {
-                added: addedEntities,
-                changed: changedEntities,
-                deleted: deletedEntities
-            };
-        }
+        }                
 
         function clone(entities) {                                              //clone each entity to be able to compare later
             var clonedEntities = [];
@@ -371,6 +364,35 @@
             });
 
             return entity;
+        }
+
+        function changed(self) {
+            var addedEntities = [],
+                changedEntities = [],
+                deletedEntities = [];
+
+            self.entities.forEach(function (entity) {                           //loop through the entities
+                var clonedEntity = findByPK(self, self.clonedEntities, entity); //find the cloned entity
+
+                if (!clonedEntity) addedEntities.push(entity);                  //no cloned entity, must be newly added = added
+                else if (!Entity.equal(entity, clonedEntity)) changedEntities.push(entity); //entity chnged compared to cloned one => changes
+            });
+
+            self.clonedEntities.forEach(function (clonedEntity) {               //loop through the cloned entities
+                if (!findByPK(self, self.entities, clonedEntity)) deletedEntities.push(clonedEntity);   //not found then must be deleted => deleted
+            });
+
+            return {
+                added: addedEntities,
+                changed: changedEntities,
+                deleted: deletedEntities
+            };
+        }
+
+        function toKey(entities) {
+            var entitiesToKey = JSON.stringify(entities);
+
+            return entitiesToKey;
         }
 
         return ctor;
