@@ -1,5 +1,5 @@
 ﻿var Helpers = (function () {
-    'use strict';
+    'use strict';    
 
     var StringBuilder = (function () {                              //StringBuilder implementation
 
@@ -323,8 +323,6 @@
                 entitiesKey = toKey(params.entities),
                 changes;
 
-            this.entitiesKey = toKey(params.entities);
-
             Object.defineProperty(this, 'entities', { get: function () { return params.entities; } });
             Object.defineProperty(this, 'pKeys', { get: function () { return params.pKeys; } });
             Object.defineProperty(this, 'clonedEntities', { get: function () { return clonedEntities; } });
@@ -333,7 +331,7 @@
                     var currentEntitiesKey = toKey(self.entities);                     //entities Key
 
                     if (currentEntitiesKey != self.entitiesKey) {                       //if entities Key has changes to last time was checked
-                        changes = changed(self);                                        //recalculate changes
+                        changes = getChanges(self);                                     //recalculate changes
                         entitiesKey = currentEntitiesKey;                               //set the new key to compare next time
                     }
 
@@ -366,21 +364,27 @@
             return entity;
         }
 
-        function changed(self) {
+        function getChanges(self) {
             var addedEntities = [],
                 changedEntities = [],
-                deletedEntities = [];
+                deletedEntities = [],
+                entitiesIsArray = Array.isArray(self.entities),
+                clonedEntitiesIsArray = Array.isArray(self.clonedEntities);
 
-            self.entities.forEach(function (entity) {                           //loop through the entities
-                var clonedEntity = findByPK(self, self.clonedEntities, entity); //find the cloned entity
+            if (entitiesIsArray && clonedEntitiesIsArray) {
+                self.entities.forEach(function (entity) {                           //loop through the entities
+                    var clonedEntity = findByPK(self, self.clonedEntities, entity); //find the cloned entity
 
-                if (!clonedEntity) addedEntities.push(entity);                  //no cloned entity, must be newly added = added
-                else if (!Entity.equal(entity, clonedEntity)) changedEntities.push(entity); //entity chnged compared to cloned one => changes
-            });
+                    if (!clonedEntity) addedEntities.push(entity);                  //no cloned entity, must be newly added = added
+                    else if (!Entity.equal(entity, clonedEntity)) changedEntities.push(entity); //entity chnged compared to cloned one => changes
+                });
 
-            self.clonedEntities.forEach(function (clonedEntity) {               //loop through the cloned entities
-                if (!findByPK(self, self.entities, clonedEntity)) deletedEntities.push(clonedEntity);   //not found then must be deleted => deleted
-            });
+                self.clonedEntities.forEach(function (clonedEntity) {               //loop through the cloned entities
+                    if (!findByPK(self, self.entities, clonedEntity)) deletedEntities.push(clonedEntity);   //not found then must be deleted => deleted
+                });
+            }
+            else if (!clonedEntitiesIsArray) addedEntities = self.entities;         //entities are considered added
+            else if (!entitiesIsArray) deletedEntities = self.clonedEntities;       //cloned entities are considered deleted
 
             return {
                 added: addedEntities,
@@ -390,13 +394,11 @@
         }
 
         function toKey(entities) {
-            var entitiesToKey = JSON.stringify(entities);
-
-            return entitiesToKey;
+            return entities ? JSON.stringify(entities) : entities;
         }
 
         return ctor;
-    })();
+    })();    
 
     return {
         StringBuilder: StringBuilder,
