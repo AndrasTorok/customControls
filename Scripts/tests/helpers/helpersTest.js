@@ -191,3 +191,60 @@ describe('Observer', function () {
         expect(secondSubjectValue).toEqual(theFirstValue);                  //should be set to theFirstValue
     });
 });
+
+describe('Entities performance', function () {
+
+    var items = 100,
+        addresses,
+        arrayStopWatch,
+        dictionaryStopWatch;
+
+    var Address = (function () {
+
+        var ctor = function (country, county, locality) {
+            this.country = country;
+            this.county = county;
+            this.locality = locality;
+        }
+
+        ctor.prototype.toString = function () {
+            return JSON.stringify(ctor);
+        }
+
+        return ctor;
+    });
+
+    beforeEach(function () {
+        addresses = [];
+
+        for (var country = 0; country < items ; country++) {
+            for (var county = 0; county < items ; county++) {
+                for (var locality = 0; locality < items ; locality++) {
+                    addresses.push(new Address(country, county, locality));
+                }
+            }
+        }
+    });
+
+    it('Array version', function () {
+        arrayStopWatch = new Helpers.StopWatch();
+
+        var entities = new Helpers.Entities({ entities: addresses, pKeys: ['country', 'county', 'locality'] }),
+            changes = entities.changes;
+
+        arrayStopWatch.stop();
+        expect(changes).not.toBe(null);
+        var duration = arrayStopWatch.duration();
+    });
+
+    it('Dictionary version', function () {
+        dictionaryStopWatch = new Helpers.StopWatch();
+
+        var entities = new Helpers.DictionaryEntities({ entities: addresses, pKeys: ['country', 'county', 'locality'] }),
+            changes = entities.changes;
+
+        dictionaryStopWatch.stop();
+        expect(changes).not.toBe(null);
+        var duration = dictionaryStopWatch.duration();
+    });
+});

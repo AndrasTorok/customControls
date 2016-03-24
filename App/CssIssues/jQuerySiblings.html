@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Sibling Hovered Using jQuery</title>
+    <style>
+        .wrapperOrElement {
+            border: 1px solid black;
+        }
+        .hovered .wrapperOrElement{
+            background-color: red;
+        }
+    </style>
+    <script src="../../Scripts/lib/jQuery/jquery-1.9.1.js"></script>
+    <script>
+        $(document).ready(function () {
+            var els = $('.wrapperOrElement').hover(function () {
+                $(this).parent('*').addClass('hovered');
+            }, function () {
+                $(this).parent('*').removeClass('hovered');
+            });
+        });       
+    </script>
+</head>
+<body>
+    <section class="container">
+        <span class="wrapperOrElement">This is element</span>
+        <span class="wrapperOrElement">This is element</span>
+        <span class="wrapperOrElement">
+            <span>This is wraped element</span>
+        </span>
+        <span class="wrapperOrElement">
+            <span>This is wraped element</span>
+        </span>
+    </section>
+    <section class="container">
+        <span class="wrapperOrElement">This is element</span>
+        <span class="wrapperOrElement">This is element</span>
+        <span class="wrapperOrElement">
+            <span>This is wraped element</span>
+        </span>
+        <span class="wrapperOrElement">
+            <span>This is wraped element</span>
+        </span>
+    </section>
+    <section class="container">
+        <span class="wrapperOrElement">This is element</span>
+        <span class="wrapperOrElement">This is element</span>
+        <span class="wrapperOrElement">
+            <span>This is wraped element</span>
+        </span>
+        <span class="wrapperOrElement">
+            <span>This is wraped element</span>
+        </span>
+    </section>
+</body>
+</html>

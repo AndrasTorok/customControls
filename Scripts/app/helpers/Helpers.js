@@ -80,6 +80,16 @@
             return keys;
         }
 
+        ctor.prototype.keys = function (predicate) {
+            var values = [];
+
+            this.forEach(function (key, value) {
+                if (!predicate || predicate(key, value)) values.push(value);
+            });
+
+            return values;
+        }
+
         ctor.prototype.first = function (predicate) {
             if (predicate) throwErrorIfPredicateNotFunction('first', predicate);        //predicate is optional
             var self = this,
@@ -400,6 +410,72 @@
         return ctor;
     })();    
 
+    var DictionaryEntities = (function () {
+
+        var ctor = function (params) {
+            var self = this,
+                clonedEntities = clone(params.entities),
+                entitiesKey = toKey(params.entities),
+                changes;
+
+            Object.defineProperty(this, 'entities', { get: function () { return params.entities; } });
+            Object.defineProperty(this, 'pKeys', { get: function () { return params.pKeys; } });
+            Object.defineProperty(this, 'clonedEntities', { get: function () { return clonedEntities; } });
+            Object.defineProperty(this, 'changes', {
+                get: function () {
+                    var currentEntitiesKey = toKey(self.entities);             //entities Key
+
+                    if (currentEntitiesKey != self.entitiesKey) {                       //if entities Key has changes to last time was checked
+                        changes = getChanges(self);                                     //recalculate changes
+                        entitiesKey = currentEntitiesKey;                               //set the new key to compare next time
+                    }
+
+                    return changes;
+                }
+            });
+        }
+
+        function clone(entities) {                                              //clone each entity to be able to compare later
+            var clonedEntities = new Dictionary();
+
+            entities.forEach(function (entity) {
+                clonedEntities.add(entity.toString(), Entity.clone(entity));
+            });
+
+            return clonedEntities;
+        }        
+
+        function getChanges(self) {
+            var addedEntities = [],
+                changedEntities = [],
+                deletedEntities = [],
+                entities = clone(self.entities);
+
+            self.entities.forEach(function (entity) {                           //loop through the entities
+                var clonedEntity = self.clonedEntities.get(entity.toString()); //find the cloned entity
+
+                if (!clonedEntity) addedEntities.push(entity);                  //no cloned entity, must be newly added = added
+                else if (!Entity.equal(entity, clonedEntity)) changedEntities.push(entity); //entity chnged compared to cloned one => changes
+            });
+
+            self.clonedEntities.forEach(function (clonedEntity) {               //loop through the cloned entities
+                if (!self.clonedEntities.get(clonedEntity.toString())) deletedEntities.push(clonedEntity);   //not found then must be deleted => deleted
+            });
+
+            return {
+                added: addedEntities,
+                changed: changedEntities,
+                deleted: deletedEntities
+            };
+        }
+
+        function toKey(entities) {
+            return entities ? JSON.stringify(entities) : entities;
+        }
+
+        return ctor;
+    })();
+
     return {
         StringBuilder: StringBuilder,
         Dictionary: Dictionary,
@@ -407,6 +483,7 @@
         Observer: Observer,
         StopWatch: StopWatch,
         Entity: Entity,
-        Entities: Entities
+        Entities: Entities,
+        DictionaryEntities: DictionaryEntities
     };
 })();

@@ -121,6 +121,9 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Content Include="App\CssIssues\ParentHovered.html" />
+    <Content Include="App\CssIssues\jQuerySiblings.html" />
+    <Content Include="App\CssIssues\SiblingHovered.html" />
     <Content Include="App\ReactJS\js\app.js" />
     <Content Include="App\ReactJS\js\components\Forum.react.js" />
     <Content Include="App\ReactJS\ReactJsExample.html" />
