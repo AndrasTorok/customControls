@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Parent Hovered</title>
+    <style>
+        .wrapperOrElement {
+            border: 1px solid black;
+        }
+        .container:hover .wrapperOrElement{
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <section class="container">
+        <span class="wrapperOrElement">This is element</span>
+        <span class="wrapperOrElement">This is element</span>
+        <span class="wrapperOrElement">
+            <span>This is wraped element</span>
+        </span>
+        <span class="wrapperOrElement">
+            <span>This is wraped element</span>
+        </span>
+    </section>
+    <section class="container">
+        <span class="wrapperOrElement">This is element</span>
+        <span class="wrapperOrElement">This is element</span>
+        <span class="wrapperOrElement">
+            <span>This is wraped element</span>
+        </span>
+        <span class="wrapperOrElement">
+            <span>This is wraped element</span>
+        </span>
+    </section>
+    <section class="container">
+        <span class="wrapperOrElement">This is element</span>
+        <span class="wrapperOrElement">This is element</span>
+        <span class="wrapperOrElement">
+            <span>This is wraped element</span>
+        </span>
+        <span class="wrapperOrElement">
+            <span>This is wraped element</span>
+        </span>
+    </section>
+</body>
+</html>

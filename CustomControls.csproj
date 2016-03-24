@@ -121,6 +121,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Content Include="App\CssIssues\ParentHovered - Copy.html" />
     <Content Include="App\CssIssues\ParentHovered.html" />
     <Content Include="App\CssIssues\jQuerySiblings.html" />
     <Content Include="App\CssIssues\SiblingHovered.html" />
